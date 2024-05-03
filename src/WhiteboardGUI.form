@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="WhiteboardGUI">
+  <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <toolbar id="fcd1e" binding="drawingOptionsToolbar">
+        <constraints border-constraint="East"/>
+        <properties>
+          <name value="Drawing Options"/>
+          <orientation value="1"/>
+          <toolTipText value="Drawing Options"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="2722d" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="dc8c4" class="javax.swing.JButton" binding="eraseButton">
+            <constraints/>
+            <properties>
+              <text value="Erase"/>
+              <toolTipText value="Erase"/>
+            </properties>
+          </component>
+          <component id="fcd38" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="47940" class="javax.swing.JButton" binding="brushButton">
+            <constraints/>
+            <properties>
+              <text value="Brush"/>
+              <toolTipText value="Brush"/>
+            </properties>
+          </component>
+          <component id="ce779" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="ea4a" class="javax.swing.JButton" binding="lineButton">
+            <constraints/>
+            <properties>
+              <text value="Line"/>
+              <toolTipText value="Line"/>
+            </properties>
+          </component>
+          <component id="a39c" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="ee59d" class="javax.swing.JButton" binding="rectangleButton">
+            <constraints/>
+            <properties>
+              <text value="Rectangle"/>
+              <toolTipText value="Rectangle"/>
+            </properties>
+          </component>
+          <component id="ceb71" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="f9d68" class="javax.swing.JButton" binding="circleButton">
+            <constraints/>
+            <properties>
+              <text value="Circle"/>
+              <toolTipText value="Circle"/>
+            </properties>
+          </component>
+          <component id="d8836" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="6f91e" class="javax.swing.JButton" binding="ovalButton">
+            <constraints/>
+            <properties>
+              <text value="Oval"/>
+              <toolTipText value="Oval"/>
+            </properties>
+          </component>
+          <component id="aabd6" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </toolbar>
+    </children>
+  </grid>
+</form>

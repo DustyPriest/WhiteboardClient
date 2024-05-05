@@ -1,8 +1,9 @@
 package shapes;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public interface ICustomShape {
+public interface ICustomShape extends Serializable {
 
     Color getColor();
 

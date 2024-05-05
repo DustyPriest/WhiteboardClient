@@ -13,13 +13,11 @@ public class WhiteboardGUI extends JFrame {
     private JButton ovalButton;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
-    private IRemoteWhiteboard remoteWhiteboardState;
 
     public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState) {
         super();
-        this.remoteWhiteboardState = remoteWhiteboardState;
 
-        whiteboardCanvas = new WhiteboardCanvas();
+        whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState);
         mainPanel.add(whiteboardCanvas, BorderLayout.CENTER);
         setDrawingOptionsListeners();
         setDrawingMode(DrawingMode.BRUSH, brushButton);

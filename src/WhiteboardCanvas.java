@@ -26,11 +26,12 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
     private int drawingStroke = 1;
     private ArrayList<Shape> shapes = new ArrayList<>();
     private Shape previewShape;
+    private IRemoteWhiteboard remoteWhiteboardState;
 
-    public WhiteboardCanvas() {
+    public WhiteboardCanvas(IRemoteWhiteboard remoteWhiteboardState) {
         super();
+        this.remoteWhiteboardState = remoteWhiteboardState;
         this.setBackground(Color.WHITE);
-        shapes.add(new Rectangle(50, 50, 50, 50));
         addMouseListener(this);
         addMouseMotionListener(this);
     }
@@ -39,7 +40,12 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-
+        try {
+            shapes = remoteWhiteboardState.getShapes();
+        } catch (Exception e) {
+            System.err.println("failed to get shapes from server");
+            e.printStackTrace();
+        }
         for (Shape shape : shapes) {
             g2.draw(shape);
         }
@@ -72,77 +78,87 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        switch (drawingMode) {
-            case ERASE:
-                shapes.add(new Ellipse2D.Double(e.getX(), e.getY(), drawingStroke, drawingStroke));
-                repaint();
-                break;
-            case BRUSH:
-                shapes.add(new Ellipse2D.Double(e.getX(), e.getY(), drawingStroke, drawingStroke));
-                repaint();
-                break;
-            case TEXT:
-                // TODO: start text input
-                break;
-            case RECTANGLE, LINE, CIRCLE, OVAL:
-                break;
-            default:
-                break;
+        try {
+            switch (drawingMode) {
+                case ERASE:
+                    remoteWhiteboardState.addShape(new Ellipse2D.Double(e.getX(), e.getY(), drawingStroke, drawingStroke));
+                    repaint();
+                    break;
+                case BRUSH:
+                    remoteWhiteboardState.addShape(new Ellipse2D.Double(e.getX(), e.getY(), drawingStroke, drawingStroke));
+                    repaint();
+                    break;
+                case TEXT:
+                    // TODO: start text input
+                    break;
+                case RECTANGLE, LINE, CIRCLE, OVAL:
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception exc) {
+            System.err.println("failed to add shape to server");
+            exc.printStackTrace();
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        switch (drawingMode) {
-            case ERASE:
-                shapes.add(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, canvasColor, drawingStroke));
-                repaint();
-                break;
-            case BRUSH:
-                shapes.add(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, drawingColor, drawingStroke));
-                repaint();
-                break;
-            case LINE:
-                if (previewShape == null ) {
-                    previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY());
-                } else {
-                    CustomLine currPreview = (CustomLine) previewShape;
-                    currPreview.updateBounds(e.getX(), e.getY());
-                }
-                repaint();
-                break;
-            case RECTANGLE:
-                if (previewShape == null ) {
-                    previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1);
-                } else {
-                    CustomRectangle currPreview = (CustomRectangle) previewShape;
-                    currPreview.updateBounds(e.getX(), e.getY());
-                }
-                repaint();
-                break;
-            case CIRCLE:
-                if (previewShape == null ) {
-                    previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
-                } else {
-                    CustomEllipse currPreview = (CustomEllipse) previewShape;
-                    double diameter = e.getX() - currPreview.getX();
-                    currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
-                }
-                repaint();
-                break;
-            case OVAL:
-                if (previewShape == null ) {
-                    previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
-                } else {
-                    CustomEllipse currPreview = (CustomEllipse) previewShape;
-                    currPreview.updateBounds(e.getX(), e.getY());
-                }
-                repaint();
-                break;
-            case TEXT:
-                break;
-            default:
-                break;
+        try {
+            switch (drawingMode) {
+                case ERASE:
+                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, canvasColor, drawingStroke));
+                    repaint();
+                    break;
+                case BRUSH:
+                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, drawingColor, drawingStroke));
+                    repaint();
+                    break;
+                case LINE:
+                    if (previewShape == null) {
+                        previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY());
+                    } else {
+                        CustomLine currPreview = (CustomLine) previewShape;
+                        currPreview.updateBounds(e.getX(), e.getY());
+                    }
+                    repaint();
+                    break;
+                case RECTANGLE:
+                    if (previewShape == null) {
+                        previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1);
+                    } else {
+                        CustomRectangle currPreview = (CustomRectangle) previewShape;
+                        currPreview.updateBounds(e.getX(), e.getY());
+                    }
+                    repaint();
+                    break;
+                case CIRCLE:
+                    if (previewShape == null) {
+                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
+                    } else {
+                        CustomEllipse currPreview = (CustomEllipse) previewShape;
+                        double diameter = e.getX() - currPreview.getX();
+                        currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
+                    }
+                    repaint();
+                    break;
+                case OVAL:
+                    if (previewShape == null) {
+                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
+                    } else {
+                        CustomEllipse currPreview = (CustomEllipse) previewShape;
+                        currPreview.updateBounds(e.getX(), e.getY());
+                    }
+                    repaint();
+                    break;
+                case TEXT:
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception exc) {
+            System.err.println("failed to add shape to server");
+            exc.printStackTrace();
         }
     }
 
@@ -153,7 +169,12 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (previewShape != null) {
-            shapes.add(previewShape);
+            try {
+                remoteWhiteboardState.addShape(previewShape);
+            } catch (Exception exc) {
+                System.err.println("failed to add shape to server");
+                exc.printStackTrace();
+            }
             previewShape = null;
             this.repaint();
         }

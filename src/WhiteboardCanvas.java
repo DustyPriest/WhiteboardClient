@@ -1,3 +1,5 @@
+import shapes.*;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -38,7 +40,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(drawingColor);
+
         for (Shape shape : shapes) {
             g2.draw(shape);
         }
@@ -60,7 +62,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
 
 
     protected void setDrawingMode(DrawingMode drawingMode) {
-        // TODO: put colour on shapes themselves
+        // TODO: put colour on shapes themselves && make rectangle etc take two points, so can draw in all directions
         if (drawingMode == DrawingMode.ERASE) {
             setDrawingColor(canvasColor);
         } else if (this.drawingMode == DrawingMode.ERASE) {
@@ -94,54 +96,47 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener {
     public void mouseDragged(MouseEvent e) {
         switch (drawingMode) {
             case ERASE:
-                shapes.add(new Ellipse2D.Double(e.getX(), e.getY(), drawingStroke, drawingStroke));
+                shapes.add(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, canvasColor, drawingStroke));
                 repaint();
                 break;
             case BRUSH:
-                shapes.add(new Ellipse2D.Double(e.getX(), e.getY(), drawingStroke, drawingStroke));
+                shapes.add(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, drawingColor, drawingStroke));
                 repaint();
                 break;
             case LINE:
                 if (previewShape == null ) {
-                    previewShape = new Line2D.Double(e.getX(), e.getY(), e.getX(), e.getY());
+                    previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY());
                 } else {
-                    previewShape = new Line2D.Double(((Line2D) previewShape).getX1(), ((Line2D) previewShape).getY1(), e.getX(), e.getY());
+                    CustomLine currPreview = (CustomLine) previewShape;
+                    currPreview.updateBounds(e.getX(), e.getY());
                 }
                 repaint();
                 break;
             case RECTANGLE:
-                // TODO: allow drawing in all directions
                 if (previewShape == null ) {
-                    previewShape = new Rectangle(e.getX(), e.getY(), 1, 1);
+                    previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1);
                 } else {
-                    int mouseX = e.getX();
-                    int mouseY = e.getY();
-                    Rectangle currPreview = (Rectangle) previewShape;
-                    previewShape = new Rectangle(currPreview.x, currPreview.y, mouseX - currPreview.x, mouseY - currPreview.y);
-
+                    CustomRectangle currPreview = (CustomRectangle) previewShape;
+                    currPreview.updateBounds(e.getX(), e.getY());
                 }
                 repaint();
                 break;
             case CIRCLE:
-                // TODO: allow drawing in all directions
                 if (previewShape == null ) {
-                    previewShape = new Ellipse2D.Double(e.getX(), e.getY(), 1, 1);
+                    previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
                 } else {
-                    Ellipse2D currPreview = (Ellipse2D) previewShape;
+                    CustomEllipse currPreview = (CustomEllipse) previewShape;
                     double diameter = e.getX() - currPreview.getX();
-                    previewShape = new Ellipse2D.Double(currPreview.getX(), currPreview.getY(), diameter, diameter);
+                    currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
                 }
                 repaint();
                 break;
             case OVAL:
-                // TODO: allow drawing in all directions
                 if (previewShape == null ) {
-                    previewShape = new Ellipse2D.Double(e.getX(), e.getY(), 1, 1);
+                    previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
                 } else {
-                    int mouseX = e.getX();
-                    int mouseY = e.getY();
-                    Ellipse2D currPreview = (Ellipse2D) previewShape;
-                    previewShape = new Ellipse2D.Double(currPreview.getX(), currPreview.getY(), mouseX - currPreview.getX(), mouseY - currPreview.getY());
+                    CustomEllipse currPreview = (CustomEllipse) previewShape;
+                    currPreview.updateBounds(e.getX(), e.getY());
                 }
                 repaint();
                 break;

@@ -10,6 +10,7 @@
       <toolbar id="fcd1e" binding="drawingOptionsToolbar">
         <constraints border-constraint="East"/>
         <properties>
+          <margin top="1" left="1" bottom="1" right="1"/>
           <name value="Drawing Options"/>
           <orientation value="1"/>
           <toolTipText value=""/>
@@ -97,11 +98,20 @@
             <constraints/>
             <properties/>
           </component>
+          <component id="31ffb" class="javax.swing.JCheckBox" binding="fillCheckBox" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Fill"/>
+              <toolTipText value="Fill Shapes"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
       <toolbar id="b1ea1" binding="styleOptionsToolbar">
         <constraints border-constraint="South"/>
         <properties>
+          <floatable value="false"/>
+          <margin top="0" left="0" bottom="5" right="0"/>
           <name value="Style Options"/>
           <orientation value="0"/>
           <rollover value="false"/>

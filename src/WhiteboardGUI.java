@@ -17,6 +17,7 @@ public class WhiteboardGUI extends JFrame {
     private JSlider sizeSlider;
     private JSpinner fontSizeSpinner;
     private JComboBox fontComboBox;
+    private JCheckBox fillCheckBox;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
 
@@ -51,6 +52,7 @@ public class WhiteboardGUI extends JFrame {
         circleButton.addActionListener(e -> setDrawingMode(DrawingMode.CIRCLE, circleButton));
         ovalButton.addActionListener(e -> setDrawingMode(DrawingMode.OVAL, ovalButton));
         textButton.addActionListener(e -> setDrawingMode(DrawingMode.TEXT, textButton));
+        fillCheckBox.addActionListener(e -> whiteboardCanvas.setFillSelected(fillCheckBox.isSelected()));
     }
 
     private void setStyleOptionsListeners() {

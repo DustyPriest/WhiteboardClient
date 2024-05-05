@@ -74,7 +74,6 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
 
 
     protected void setDrawingMode(DrawingMode drawingMode) {
-        // TODO: put colour on shapes themselves && make rectangle etc take two points, so can draw in all directions
         if (drawingMode == DrawingMode.ERASE) {
             setDrawingColor(canvasColor);
         } else if (this.drawingMode == DrawingMode.ERASE) {
@@ -89,11 +88,11 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         try {
             switch (drawingMode) {
                 case ERASE:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke));
+                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, canvasColor, drawingStroke, true));
                     repaint();
                     break;
                 case BRUSH:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke));
+                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, true));
                     repaint();
                     break;
                 case TEXT:
@@ -121,16 +120,16 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         try {
             switch (drawingMode) {
                 case ERASE:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, canvasColor, drawingStroke));
+                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, canvasColor, drawingStroke, true));
                     repaint();
                     break;
                 case BRUSH:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), drawingStroke, drawingStroke, drawingColor, drawingStroke));
+                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, true));
                     repaint();
                     break;
                 case LINE:
                     if (previewShape == null) {
-                        previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY());
+                        previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY(), drawingColor, drawingStroke);
                     } else {
                         CustomLine currPreview = (CustomLine) previewShape;
                         currPreview.updateBounds(e.getX(), e.getY());
@@ -139,7 +138,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                     break;
                 case RECTANGLE:
                     if (previewShape == null) {
-                        previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1);
+                        previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
                     } else {
                         CustomRectangle currPreview = (CustomRectangle) previewShape;
                         currPreview.updateBounds(e.getX(), e.getY());
@@ -148,7 +147,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                     break;
                 case CIRCLE:
                     if (previewShape == null) {
-                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
+                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
                     } else {
                         CustomEllipse currPreview = (CustomEllipse) previewShape;
                         double diameter = e.getX() - currPreview.getX();
@@ -158,7 +157,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                     break;
                 case OVAL:
                     if (previewShape == null) {
-                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1);
+                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
                     } else {
                         CustomEllipse currPreview = (CustomEllipse) previewShape;
                         currPreview.updateBounds(e.getX(), e.getY());
@@ -262,5 +261,9 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
 
     public void setFontFamily(String family) {
         font = new Font(family, font.getStyle(), font.getSize());
+    }
+
+    public void setFillSelected(boolean selection) {
+        fillSelected = selection;
     }
 }

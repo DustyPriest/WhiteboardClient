@@ -1,11 +1,13 @@
-import java.awt.*;
+import shapes.ICustomShape;
+
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public interface IRemoteWhiteboard extends Remote {
 
-    public ArrayList<Shape> getShapes();
-    public void addShape(Shape shape);
-    public void clearShapes();
+    ArrayList<ICustomShape> getShapes() throws RemoteException;
+    void addShape(ICustomShape shape) throws RemoteException;
+    void clearShapes() throws RemoteException;
 
 }

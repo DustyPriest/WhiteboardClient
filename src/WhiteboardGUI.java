@@ -11,6 +11,7 @@ public class WhiteboardGUI extends JFrame {
     private JButton rectangleButton;
     private JButton circleButton;
     private JButton ovalButton;
+    private JButton textButton;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
 
@@ -35,6 +36,7 @@ public class WhiteboardGUI extends JFrame {
         rectangleButton.addActionListener(e -> setDrawingMode(DrawingMode.RECTANGLE, rectangleButton));
         circleButton.addActionListener(e -> setDrawingMode(DrawingMode.CIRCLE, circleButton));
         ovalButton.addActionListener(e -> setDrawingMode(DrawingMode.OVAL, ovalButton));
+        textButton.addActionListener(e -> setDrawingMode(DrawingMode.TEXT, textButton));
     }
 
     private void setDrawingMode(DrawingMode newMode, JButton button) {

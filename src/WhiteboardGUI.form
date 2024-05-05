@@ -82,6 +82,17 @@
               <toolTipText value="Oval"/>
             </properties>
           </component>
+          <component id="2d4f9" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="2498c" class="javax.swing.JButton" binding="textButton">
+            <constraints/>
+            <properties>
+              <text value="Text"/>
+              <toolTipText value="Text"/>
+            </properties>
+          </component>
           <component id="aabd6" class="javax.swing.JToolBar$Separator">
             <constraints/>
             <properties/>

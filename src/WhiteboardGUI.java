@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-
 
 
 public class WhiteboardGUI extends JFrame {
@@ -15,9 +13,11 @@ public class WhiteboardGUI extends JFrame {
     private JButton ovalButton;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
+    private IRemoteWhiteboard remoteWhiteboardState;
 
-    public WhiteboardGUI(/*ISharedWhiteboardState sharedWhiteboardState*/) {
+    public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState) {
         super();
+        this.remoteWhiteboardState = remoteWhiteboardState;
 
         whiteboardCanvas = new WhiteboardCanvas();
         mainPanel.add(whiteboardCanvas, BorderLayout.CENTER);

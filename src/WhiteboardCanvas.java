@@ -88,11 +88,11 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         try {
             switch (drawingMode) {
                 case ERASE:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, canvasColor, drawingStroke, true));
+                    remoteWhiteboardState.addShape(new CustomBrush(e.getX(), e.getY(), canvasColor, drawingStroke));
                     repaint();
                     break;
                 case BRUSH:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, true));
+                    remoteWhiteboardState.addShape(new CustomBrush(e.getX(), e.getY(), drawingColor, drawingStroke));
                     repaint();
                     break;
                 case TEXT:
@@ -119,49 +119,14 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     public void mouseDragged(MouseEvent e) {
         try {
             switch (drawingMode) {
-                case ERASE:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, canvasColor, drawingStroke, true));
-                    repaint();
-                    break;
-                case BRUSH:
-                    remoteWhiteboardState.addShape(new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, true));
-                    repaint();
-                    break;
-                case LINE:
-                    if (previewShape == null) {
-                        previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY(), drawingColor, drawingStroke);
-                    } else {
-                        CustomLine currPreview = (CustomLine) previewShape;
-                        currPreview.updateBounds(e.getX(), e.getY());
-                    }
-                    repaint();
-                    break;
-                case RECTANGLE:
-                    if (previewShape == null) {
-                        previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
-                    } else {
-                        CustomRectangle currPreview = (CustomRectangle) previewShape;
-                        currPreview.updateBounds(e.getX(), e.getY());
-                    }
+                case ERASE, BRUSH, LINE, RECTANGLE, OVAL:
+                    previewShape.updateBounds(e.getX(), e.getY());
                     repaint();
                     break;
                 case CIRCLE:
-                    if (previewShape == null) {
-                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
-                    } else {
-                        CustomEllipse currPreview = (CustomEllipse) previewShape;
-                        double diameter = e.getX() - currPreview.getX();
-                        currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
-                    }
-                    repaint();
-                    break;
-                case OVAL:
-                    if (previewShape == null) {
-                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
-                    } else {
-                        CustomEllipse currPreview = (CustomEllipse) previewShape;
-                        currPreview.updateBounds(e.getX(), e.getY());
-                    }
+                    CustomEllipse currPreview = (CustomEllipse) previewShape;
+                    double diameter = e.getX() - currPreview.getX();
+                    currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
                     repaint();
                     break;
                 case TEXT:
@@ -177,6 +142,35 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
 
     @Override
     public void mousePressed(MouseEvent e) {
+        requestFocusInWindow();
+        if (!enteringText) {
+            try {
+                switch (drawingMode) {
+                    case ERASE:
+                        previewShape = new CustomBrush(e.getX(), e.getY(), canvasColor, drawingStroke);
+                        repaint();
+                        break;
+                    case BRUSH:
+                        previewShape = new CustomBrush(e.getX(), e.getY(), drawingColor, drawingStroke);
+                        repaint();
+                        break;
+                    case LINE:
+                        previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY(), drawingColor, drawingStroke);
+                        break;
+                    case RECTANGLE:
+                        previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
+                        break;
+                    case CIRCLE, OVAL:
+                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception exc) {
+                System.err.println("failed to add shape to server");
+                exc.printStackTrace();
+            }
+        }
     }
 
     @Override

@@ -24,6 +24,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     private boolean fillSelected = false;
     private boolean enteringText = false;
     private DrawingMode drawingMode = DrawingMode.BRUSH;
+    private Font font = new Font("Arial", Font.PLAIN, 12);
     private Color canvasColor = Color.WHITE;
 
     private Color drawingColor = Color.BLACK;
@@ -100,7 +101,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                         finaliseText((CustomText) previewShape);
                     } else {
                         enteringText = true;
-                        previewShape = new CustomText("", e.getX(), e.getY(), drawingColor);
+                        previewShape = new CustomText("", e.getX(), e.getY(), drawingColor, font);
                     }
                     repaint();
                     break;
@@ -213,10 +214,13 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         if (enteringText) {
             CustomText currPreview = (CustomText) previewShape;
             char c = e.getKeyChar();
-            if (c == '\b') {
+            if (c == KeyEvent.VK_BACK_SPACE) {
                 currPreview.backspace();
-            } else if (c == '\n') {
+            } else if (c == KeyEvent.VK_ENTER) {
                 finaliseText(currPreview);
+            } else if (c == KeyEvent.VK_ESCAPE) {
+                enteringText = false;
+                previewShape = null;
             } else {
                 currPreview.append(e.getKeyChar());
             }
@@ -246,5 +250,17 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
             }
         }
         previewShape = null;
+    }
+
+    public Color getDrawingColor() {
+        return drawingColor;
+    }
+
+    public void setFontSize(int size) {
+        font = new Font(font.getName(), font.getStyle(), size);
+    }
+
+    public void setFontFamily(String family) {
+        font = new Font(family, font.getStyle(), font.getSize());
     }
 }

@@ -12,6 +12,11 @@ public class WhiteboardGUI extends JFrame {
     private JButton circleButton;
     private JButton ovalButton;
     private JButton textButton;
+    private JToolBar styleOptionsToolbar;
+    private JButton colorButton;
+    private JSlider sizeSlider;
+    private JSpinner fontSizeSpinner;
+    private JComboBox fontComboBox;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
 
@@ -20,7 +25,16 @@ public class WhiteboardGUI extends JFrame {
 
         whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState);
         mainPanel.add(whiteboardCanvas, BorderLayout.CENTER);
+        for (String name : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
+            fontComboBox.addItem(name);
+        }
+        fontComboBox.setSelectedItem("Arial");
+        fontSizeSpinner.setValue(12);
+        fontSizeSpinner.setModel(new SpinnerNumberModel(12, 1, 72, 1));
+
         setDrawingOptionsListeners();
+        setStyleOptionsListeners();
+
         setDrawingMode(DrawingMode.BRUSH, brushButton);
         this.setTitle("Whiteboard");
         this.setContentPane(mainPanel);
@@ -37,6 +51,24 @@ public class WhiteboardGUI extends JFrame {
         circleButton.addActionListener(e -> setDrawingMode(DrawingMode.CIRCLE, circleButton));
         ovalButton.addActionListener(e -> setDrawingMode(DrawingMode.OVAL, ovalButton));
         textButton.addActionListener(e -> setDrawingMode(DrawingMode.TEXT, textButton));
+    }
+
+    private void setStyleOptionsListeners() {
+        sizeSlider.addChangeListener(e -> whiteboardCanvas.setDrawingStroke(sizeSlider.getValue()));
+        colorButton.addActionListener(e -> {
+            Color newColor = JColorChooser.showDialog(null, "Choose a color", whiteboardCanvas.getDrawingColor());
+            if (newColor != null) {
+                whiteboardCanvas.setDrawingColor(newColor);
+            }
+        });
+        fontSizeSpinner.addChangeListener(e -> {
+            int newSize = (int) fontSizeSpinner.getValue();
+            whiteboardCanvas.setFontSize(newSize);
+        });
+        fontComboBox.addActionListener(e -> {
+            String fontName = (String) fontComboBox.getSelectedItem();
+            whiteboardCanvas.setFontFamily(fontName);
+        });
     }
 
     private void setDrawingMode(DrawingMode newMode, JButton button) {

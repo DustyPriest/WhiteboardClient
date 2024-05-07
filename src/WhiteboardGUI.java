@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
 
@@ -13,6 +15,7 @@ public class WhiteboardGUI extends JFrame {
     private JButton circleButton;
     private JButton ovalButton;
     private JButton textButton;
+    private JButton chatButton;
     private JToolBar styleOptionsToolbar;
     private JButton colorButton;
     private JSlider sizeSlider;
@@ -55,6 +58,7 @@ public class WhiteboardGUI extends JFrame {
         fontSizeSpinner.setValue(12);
         fontSizeSpinner.setModel(new SpinnerNumberModel(12, 1, 72, 1));
 
+        addChatButton();
         setDrawingOptionsListeners();
         setStyleOptionsListeners();
 
@@ -62,6 +66,17 @@ public class WhiteboardGUI extends JFrame {
         this.setTitle("Whiteboard");
         this.setContentPane(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    remoteWhiteboardState.kickUser(username);
+                } catch (RemoteException ex) {
+                    System.err.println("Failed to remove user from server list");
+                    ex.printStackTrace();
+                }
+            }
+        });
         this.setSize(800, 600);
         this.setVisible(true);
     }
@@ -100,5 +115,15 @@ public class WhiteboardGUI extends JFrame {
         selectedDrawingButton = button;
         selectedDrawingButton.setEnabled(false);
         whiteboardCanvas.setDrawingMode(newMode);
+    }
+
+    private void addChatButton() {
+        chatButton = new JButton("Chat");
+        // TODO: add chat button action listener
+        chatButton.setToolTipText("Show Chat");
+        drawingOptionsToolbar.addSeparator();
+        drawingOptionsToolbar.add(Box.createGlue());
+        drawingOptionsToolbar.add(chatButton);
+        drawingOptionsToolbar.addSeparator();
     }
 }

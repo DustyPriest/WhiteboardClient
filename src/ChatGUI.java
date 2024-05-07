@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -20,11 +21,13 @@ public class ChatGUI extends JFrame implements KeyListener {
         super();
         this.remoteWhiteboardState = remoteWhiteboardState;
         this.username = username;
+
         this.setContentPane(mainPanel);
         this.setTitle("Chat & Users");
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setSize(400, 600);
-        this.setVisible(true);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setBounds((int) screenSize.getWidth() / 2 + 405, (int) screenSize.getHeight() / 2 - 300, 400, 600);
 
         sendButton.addActionListener(e -> sendMessage());
         messageField.addKeyListener(this);
@@ -39,6 +42,8 @@ public class ChatGUI extends JFrame implements KeyListener {
             }
         });
         chatUpdateTimer.start();
+
+        this.setVisible(true);
     }
 
     private void sendMessage() {

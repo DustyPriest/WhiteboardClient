@@ -77,6 +77,8 @@ public class WhiteboardGUI extends JFrame {
             }
         });
         this.setSize(800, 600);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setBounds((int) screenSize.getWidth() / 2 - 400, (int) screenSize.getHeight() / 2 - 300, 800, 600);
         this.setVisible(true);
 
         chatGUI = new ChatGUI(remoteWhiteboardState, username);

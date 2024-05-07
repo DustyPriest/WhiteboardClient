@@ -20,11 +20,11 @@ public class WhiteboardGUI extends JFrame {
     private JButton colorButton;
     private JSlider sizeSlider;
     private JSpinner fontSizeSpinner;
-    private JComboBox fontComboBox;
+    private JComboBox<String> fontComboBox;
     private JCheckBox fillCheckBox;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
-    private ChatGUI chatGUI;
+    private final ChatGUI chatGUI;
 
     public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
         super();
@@ -32,7 +32,11 @@ public class WhiteboardGUI extends JFrame {
         try {
             if (remoteWhiteboardState.validateUsername(username)) {
                 try {
-                    remoteWhiteboardState.addUser(username);
+                    remoteWhiteboardState.applyForConnection(username);
+                    ConnectingGUI connectingGUI = new ConnectingGUI(remoteWhiteboardState, username);
+                    SwingUtilities.invokeLater(connectingGUI);
+                    awaitConnection(remoteWhiteboardState, username);
+                    connectingGUI.close();
                 } catch (RemoteException e) {
                     System.err.println("Failed to add user to remote whiteboard");
                     e.printStackTrace();
@@ -126,11 +130,22 @@ public class WhiteboardGUI extends JFrame {
 
     private void addChatButton() {
         chatButton = new JButton("Chat");
-        // TODO: add chat button action listener
         chatButton.setToolTipText("Show Chat");
         drawingOptionsToolbar.addSeparator();
         drawingOptionsToolbar.add(Box.createGlue());
         drawingOptionsToolbar.add(chatButton);
         drawingOptionsToolbar.addSeparator();
+    }
+
+    private void awaitConnection(IRemoteWhiteboard remoteWhiteboardState, String username) {
+        try {
+            while (remoteWhiteboardState.applicationPending(username)) {
+                Thread.sleep(1000);
+            }
+        } catch (RemoteException | InterruptedException e) {
+            System.err.println("Failed to wait for connection approval");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 }

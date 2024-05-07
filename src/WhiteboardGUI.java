@@ -30,7 +30,7 @@ public class WhiteboardGUI extends JFrame {
         super();
 
         try {
-            if (remoteWhiteboardState.validateUsername(username)) {
+            if (!remoteWhiteboardState.userExists(username)) {
                 try {
                     remoteWhiteboardState.applyForConnection(username);
                     ConnectingGUI connectingGUI = new ConnectingGUI(remoteWhiteboardState, username);
@@ -52,7 +52,7 @@ public class WhiteboardGUI extends JFrame {
             System.exit(1);
         }
 
-        whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState);
+        whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState, username);
         mainPanel.add(whiteboardCanvas, BorderLayout.CENTER);
         for (String name : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             fontComboBox.addItem(name);

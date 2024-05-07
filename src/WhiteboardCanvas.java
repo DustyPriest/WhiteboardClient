@@ -31,15 +31,20 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     private ArrayList<ICustomShape> shapes = new ArrayList<>();
     private ICustomShape previewShape;
     private final IRemoteWhiteboard remoteWhiteboardState;
+    private final String username;
 
-    public WhiteboardCanvas(IRemoteWhiteboard remoteWhiteboardState) {
+    public WhiteboardCanvas(IRemoteWhiteboard remoteWhiteboardState, String username) {
         super();
         this.remoteWhiteboardState = remoteWhiteboardState;
+        this.username = username;
         this.setBackground(Color.WHITE);
         this.setFocusable(true);
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
+
+        Timer checkBanTimer = new Timer(1000, e -> checkIfKicked());
+        checkBanTimer.start();
     }
 
     @Override
@@ -84,6 +89,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     @Override
     public void mouseClicked(MouseEvent e) {
         requestFocusInWindow();
+        checkIfKicked();
         try {
             switch (drawingMode) {
                 case ERASE:
@@ -116,26 +122,21 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        try {
-            switch (drawingMode) {
-                case ERASE, BRUSH, LINE, RECTANGLE, OVAL:
-                    previewShape.updateBounds(e.getX(), e.getY());
-                    repaint();
-                    break;
-                case CIRCLE:
-                    CustomEllipse currPreview = (CustomEllipse) previewShape;
-                    double diameter = e.getX() - currPreview.getX();
-                    currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
-                    repaint();
-                    break;
-                case TEXT:
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception exc) {
-            System.err.println("failed to add shape to server");
-            exc.printStackTrace();
+        switch (drawingMode) {
+            case ERASE, BRUSH, LINE, RECTANGLE, OVAL:
+                previewShape.updateBounds(e.getX(), e.getY());
+                repaint();
+                break;
+            case CIRCLE:
+                CustomEllipse currPreview = (CustomEllipse) previewShape;
+                double diameter = e.getX() - currPreview.getX();
+                currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
+                repaint();
+                break;
+            case TEXT:
+                break;
+            default:
+                break;
         }
     }
 
@@ -143,31 +144,26 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     public void mousePressed(MouseEvent e) {
         requestFocusInWindow();
         if (!enteringText) {
-            try {
-                switch (drawingMode) {
-                    case ERASE:
-                        previewShape = new CustomBrush(e.getX(), e.getY(), canvasColor, drawingStroke);
-                        repaint();
-                        break;
-                    case BRUSH:
-                        previewShape = new CustomBrush(e.getX(), e.getY(), drawingColor, drawingStroke);
-                        repaint();
-                        break;
-                    case LINE:
-                        previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY(), drawingColor, drawingStroke);
-                        break;
-                    case RECTANGLE:
-                        previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
-                        break;
-                    case CIRCLE, OVAL:
-                        previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
-                        break;
-                    default:
-                        break;
-                }
-            } catch (Exception exc) {
-                System.err.println("failed to add shape to server");
-                exc.printStackTrace();
+            switch (drawingMode) {
+                case ERASE:
+                    previewShape = new CustomBrush(e.getX(), e.getY(), canvasColor, drawingStroke);
+                    repaint();
+                    break;
+                case BRUSH:
+                    previewShape = new CustomBrush(e.getX(), e.getY(), drawingColor, drawingStroke);
+                    repaint();
+                    break;
+                case LINE:
+                    previewShape = new CustomLine(e.getX(), e.getY(), e.getX(), e.getY(), drawingColor, drawingStroke);
+                    break;
+                case RECTANGLE:
+                    previewShape = new CustomRectangle(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
+                    break;
+                case CIRCLE, OVAL:
+                    previewShape = new CustomEllipse(e.getX(), e.getY(), 1, 1, drawingColor, drawingStroke, fillSelected);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -175,6 +171,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     @Override
     public void mouseReleased(MouseEvent e) {
         if (previewShape != null && !enteringText) {
+        checkIfKicked();
             try {
                 remoteWhiteboardState.addShape(previewShape);
             } catch (Exception exc) {
@@ -233,6 +230,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     private void finaliseText(CustomText customText) {
         enteringText = false;
         if (!customText.isEmpty()) {
+        checkIfKicked();
             customText.toggleCaret();
             try {
                 remoteWhiteboardState.addShape(customText);
@@ -258,5 +256,17 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
 
     public void setFillSelected(boolean selection) {
         fillSelected = selection;
+    }
+
+    private void checkIfKicked() {
+        try {
+            if (!remoteWhiteboardState.userExists(username)) {
+                JOptionPane.showMessageDialog(this, "You have been kicked from the server", "Kicked", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+        } catch (RemoteException e) {
+            System.err.println("Failed to check if user exists");
+            e.printStackTrace();
+        }
     }
 }

@@ -22,6 +22,7 @@
             <constraints/>
             <properties>
               <editable value="false"/>
+              <focusable value="false"/>
               <lineWrap value="true"/>
             </properties>
           </component>
@@ -56,7 +57,9 @@
           <component id="f80c" class="javax.swing.JTextArea" binding="usersArea">
             <constraints/>
             <properties>
-              <enabled value="false"/>
+              <editable value="false"/>
+              <enabled value="true"/>
+              <focusable value="false"/>
               <font style="1"/>
             </properties>
           </component>

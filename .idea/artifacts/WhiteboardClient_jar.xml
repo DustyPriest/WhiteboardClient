@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="WhiteboardClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WhiteboardClient_jar</output-path>
+    <root id="archive" name="WhiteboardClient.jar">
+      <element id="module-output" name="WhiteboardClient" />
+    </root>
+  </artifact>
+</component>

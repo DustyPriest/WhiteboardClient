@@ -17,7 +17,7 @@ public class Main {
         }
 
         try {
-            //Connect to the rmiregistry that is running on localhost
+            //Connect to the rmi registry that is running on localhost
             Registry registry = LocateRegistry.getRegistry(address);
 
             //Retrieve the stub/proxy for the remote math object from the registry

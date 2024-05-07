@@ -24,7 +24,8 @@ public class WhiteboardGUI extends JFrame {
     private JCheckBox fillCheckBox;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
-    private String username;
+    private final String username;
+    private ChatGUI chatGUI;
 
     public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
         super();
@@ -79,6 +80,8 @@ public class WhiteboardGUI extends JFrame {
         });
         this.setSize(800, 600);
         this.setVisible(true);
+
+        chatGUI = new ChatGUI(remoteWhiteboardState);
     }
 
     private void setDrawingOptionsListeners() {
@@ -90,6 +93,10 @@ public class WhiteboardGUI extends JFrame {
         ovalButton.addActionListener(e -> setDrawingMode(DrawingMode.OVAL, ovalButton));
         textButton.addActionListener(e -> setDrawingMode(DrawingMode.TEXT, textButton));
         fillCheckBox.addActionListener(e -> whiteboardCanvas.setFillSelected(fillCheckBox.isSelected()));
+        chatButton.addActionListener(e -> {
+            chatGUI.setVisible(true);
+            chatGUI.requestFocus();
+        });
     }
 
     private void setStyleOptionsListeners() {

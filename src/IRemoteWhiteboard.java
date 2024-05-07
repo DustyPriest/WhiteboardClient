@@ -7,7 +7,6 @@ public interface IRemoteWhiteboard extends Remote {
 
     ICustomShape[] getShapes() throws RemoteException;
     void addShape(ICustomShape shape) throws RemoteException;
-    void clearShapes() throws RemoteException;
 
     String[] getCurrentUsers() throws RemoteException;
     boolean userExists(String username) throws RemoteException;

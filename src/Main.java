@@ -26,7 +26,7 @@ public class Main {
             new WhiteboardGUI(remoteMath, username);
 
         }catch(Exception e) {
-            e.printStackTrace();
+            handleConnectionFailure(e);
         }
 
 

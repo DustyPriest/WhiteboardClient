@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.rmi.RemoteException;
 
 
 public class WhiteboardGUI extends JFrame {
@@ -20,9 +21,30 @@ public class WhiteboardGUI extends JFrame {
     private JCheckBox fillCheckBox;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
+    private String username;
 
-    public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState) {
+    public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
         super();
+        this.username = username;
+
+        try {
+            if (remoteWhiteboardState.validateUsername(username)) {
+                try {
+                    remoteWhiteboardState.addUser(username);
+                } catch (RemoteException e) {
+                    System.err.println("Failed to add user to remote whiteboard");
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            } else {
+                System.err.println("Username already in use");
+                System.exit(0);
+            }
+        } catch (RemoteException e) {
+            System.err.println("Failed to validate username");
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState);
         mainPanel.add(whiteboardCanvas, BorderLayout.CENTER);

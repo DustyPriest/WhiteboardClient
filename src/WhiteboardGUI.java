@@ -24,12 +24,10 @@ public class WhiteboardGUI extends JFrame {
     private JCheckBox fillCheckBox;
     private final WhiteboardCanvas whiteboardCanvas;
     private JButton selectedDrawingButton = brushButton;
-    private final String username;
     private ChatGUI chatGUI;
 
     public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
         super();
-        this.username = username;
 
         try {
             if (remoteWhiteboardState.validateUsername(username)) {
@@ -81,7 +79,7 @@ public class WhiteboardGUI extends JFrame {
         this.setSize(800, 600);
         this.setVisible(true);
 
-        chatGUI = new ChatGUI(remoteWhiteboardState);
+        chatGUI = new ChatGUI(remoteWhiteboardState, username);
     }
 
     private void setDrawingOptionsListeners() {

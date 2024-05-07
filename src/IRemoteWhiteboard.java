@@ -14,7 +14,7 @@ public interface IRemoteWhiteboard extends Remote {
     void addUser(String username) throws RemoteException;
     void kickUser(String username) throws RemoteException;
     ArrayList<String> getChatMessages() throws RemoteException;
-    void addChatMessage(String message) throws RemoteException;
+    void addChatMessage(String message, String user) throws RemoteException;
     boolean validateUsername(String username) throws RemoteException;
 
 }

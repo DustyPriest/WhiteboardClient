@@ -29,7 +29,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
 
     private Color drawingColor = Color.BLACK;
     private int drawingStroke = 1;
-    private ArrayList<ICustomShape> shapes = new ArrayList<>();
+    private ICustomShape[] shapes;
     private ICustomShape previewShape;
     private final IRemoteWhiteboard remoteWhiteboardState;
     private final String username;
@@ -111,8 +111,6 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                     }
                     repaint();
                     break;
-                case RECTANGLE, LINE, CIRCLE, OVAL:
-                    break;
                 default:
                     break;
             }
@@ -134,8 +132,6 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                 double diameter = e.getX() - currPreview.getX();
                 currPreview.updateBounds(currPreview.getX() + diameter, currPreview.getY() + diameter);
                 repaint();
-                break;
-            case TEXT:
                 break;
             default:
                 break;

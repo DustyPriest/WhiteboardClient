@@ -7,7 +7,7 @@ public class Main {
 
     private static String address;
     private static String username;
-    private static ArrayList<Timer> timers = new ArrayList<>();
+    private static final ArrayList<Timer> timers = new ArrayList<>();
 
     public static void main(String[] args) {
 

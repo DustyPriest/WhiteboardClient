@@ -38,7 +38,7 @@ public class ChatGUI extends JFrame implements KeyListener {
                 usersArea.setText(String.join("\n", remoteWhiteboardState.getCurrentUsers()));
             } catch (RemoteException ex) {
                 System.err.println("Failed to get chat messages or users");
-                ex.printStackTrace();
+                Main.handleConnectionFailure(ex);
             }
         });
         Main.addTimer(chatUpdateTimer);
@@ -55,7 +55,7 @@ public class ChatGUI extends JFrame implements KeyListener {
                 messageField.setText("");
             } catch (RemoteException ex) {
                 System.err.println("Failed to send chat message");
-                ex.printStackTrace();
+                Main.handleConnectionFailure(ex);
             }
         }
     }

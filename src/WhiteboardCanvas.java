@@ -68,7 +68,6 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
     }
 
     protected void setDrawingColor(Color color) {
-        System.out.println("Colour set to: " + color.toString());
         this.drawingColor = color;
     }
 

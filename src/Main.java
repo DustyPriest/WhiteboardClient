@@ -1,10 +1,13 @@
+import javax.swing.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 public class Main {
 
     private static String address;
     private static String username;
+    private static ArrayList<Timer> timers = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -29,6 +32,19 @@ public class Main {
 
     }
 
+    public static void handleConnectionFailure(Exception e) {
+        for (Timer timer : timers) {
+            timer.stop();
+        }
+        JOptionPane.showMessageDialog(null, "Connection to whiteboard failed.\nProgram will exit...", "Connection Failed", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        System.exit(0);
+    }
+
+    public static void addTimer(Timer timer) {
+        timers.add(timer);
+    }
+
     private static boolean parseArgs(String[] args) {
         if (args.length != 2) {
             return false;
@@ -41,4 +57,5 @@ public class Main {
         username = args[1];
         return true;
     }
+
 }

@@ -37,19 +37,21 @@ public class WhiteboardGUI extends JFrame {
                     SwingUtilities.invokeLater(connectingGUI);
                     awaitConnection(remoteWhiteboardState, username);
                     connectingGUI.close();
+                    if (!remoteWhiteboardState.userExists(username)) {
+                        JOptionPane.showMessageDialog(this, "Connection request denied", "Connection Denied", JOptionPane.ERROR_MESSAGE);
+                        System.exit(0);
+                    }
                 } catch (RemoteException e) {
                     System.err.println("Failed to add user to remote whiteboard");
-                    e.printStackTrace();
-                    System.exit(1);
+                    Main.handleConnectionFailure(e);
                 }
             } else {
-                System.err.println("Username already in use");
+                JOptionPane.showMessageDialog(this, "Username already in use, please try again with another username.", "Connection Denied", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
         } catch (RemoteException e) {
             System.err.println("Failed to validate username");
-            e.printStackTrace();
-            System.exit(1);
+            Main.handleConnectionFailure(e);
         }
 
         whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState, username);
@@ -76,7 +78,7 @@ public class WhiteboardGUI extends JFrame {
                     remoteWhiteboardState.kickUser(username);
                 } catch (RemoteException ex) {
                     System.err.println("Failed to remove user from server list");
-                    ex.printStackTrace();
+                    Main.handleConnectionFailure(ex);
                 }
             }
         });
@@ -86,6 +88,7 @@ public class WhiteboardGUI extends JFrame {
         this.setVisible(true);
 
         chatGUI = new ChatGUI(remoteWhiteboardState, username);
+        this.requestFocus();
     }
 
     private void setDrawingOptionsListeners() {
@@ -142,10 +145,9 @@ public class WhiteboardGUI extends JFrame {
             while (remoteWhiteboardState.applicationPending(username)) {
                 Thread.sleep(1000);
             }
-        } catch (RemoteException | InterruptedException e) {
+        } catch (RemoteException e) {
             System.err.println("Failed to wait for connection approval");
-            e.printStackTrace();
-            System.exit(1);
-        }
+            Main.handleConnectionFailure(e);
+        } catch (InterruptedException ignored) {}
     }
 }

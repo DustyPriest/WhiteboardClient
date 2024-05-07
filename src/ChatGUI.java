@@ -41,6 +41,7 @@ public class ChatGUI extends JFrame implements KeyListener {
                 ex.printStackTrace();
             }
         });
+        Main.addTimer(chatUpdateTimer);
         chatUpdateTimer.start();
 
         this.setVisible(true);

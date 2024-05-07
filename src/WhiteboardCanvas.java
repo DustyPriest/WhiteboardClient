@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -44,6 +45,7 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         addKeyListener(this);
 
         Timer checkBanTimer = new Timer(1000, e -> checkIfKicked());
+        Main.addTimer(checkBanTimer);
         checkBanTimer.start();
     }
 
@@ -53,9 +55,9 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         Graphics2D g2 = (Graphics2D) g;
         try {
             shapes = remoteWhiteboardState.getShapes();
-        } catch (Exception e) {
-            System.err.println("failed to get shapes from server");
-            e.printStackTrace();
+        } catch (RemoteException e) {
+            System.err.println("Failed to get shapes from server");
+            Main.handleConnectionFailure(e);
         }
         for (ICustomShape shape : shapes) {
             shape.draw(g2);
@@ -114,9 +116,9 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
                 default:
                     break;
             }
-        } catch (Exception exc) {
-            System.err.println("failed to add shape to server");
-            exc.printStackTrace();
+        } catch (RemoteException ex) {
+            System.err.println("Failed to add shape to server");
+            Main.handleConnectionFailure(ex);
         }
     }
 
@@ -174,28 +176,13 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         checkIfKicked();
             try {
                 remoteWhiteboardState.addShape(previewShape);
-            } catch (Exception exc) {
-                System.err.println("failed to add shape to server");
-                exc.printStackTrace();
+            } catch (RemoteException ex) {
+                System.err.println("Failed to add shape to server");
+                Main.handleConnectionFailure(ex);
             }
             previewShape = null;
             this.repaint();
         }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-
     }
 
     @Override
@@ -217,26 +204,29 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         }
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
 
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
+    private void checkIfKicked() {
+        try {
+            if (!remoteWhiteboardState.userExists(username)) {
+                JOptionPane.showMessageDialog(this, "You have been kicked from the server", "Kicked", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+        } catch (RemoteException e) {
+            System.err.println("Failed to check if kicked from server");
+            Main.handleConnectionFailure(e);
+        }
     }
 
     private void finaliseText(CustomText customText) {
         enteringText = false;
         if (!customText.isEmpty()) {
-        checkIfKicked();
+            checkIfKicked();
             customText.toggleCaret();
             try {
                 remoteWhiteboardState.addShape(customText);
             } catch (RemoteException e) {
-                System.err.println("failed to add shape to server");
-                e.printStackTrace();
+                System.err.println("Failed to add text to server");
+                Main.handleConnectionFailure(e);
             }
         }
         previewShape = null;
@@ -258,15 +248,30 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         fillSelected = selection;
     }
 
-    private void checkIfKicked() {
-        try {
-            if (!remoteWhiteboardState.userExists(username)) {
-                JOptionPane.showMessageDialog(this, "You have been kicked from the server", "Kicked", JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
-            }
-        } catch (RemoteException e) {
-            System.err.println("Failed to check if user exists");
-            e.printStackTrace();
-        }
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
     }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+
 }

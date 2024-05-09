@@ -13,7 +13,7 @@ public class ConnectingGUI implements Runnable {
     private final JOptionPane optionPane;
     private final JDialog dialog;
 
-    public ConnectingGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
+    public ConnectingGUI(IRemoteWhiteboard remoteWhiteboard, String username) {
 
         JFrame frame = new JFrame();
         String[] options = {"Quit"};
@@ -33,7 +33,7 @@ public class ConnectingGUI implements Runnable {
 
         dialog.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                retractApplication(remoteWhiteboardState, username);
+                retractApplication(remoteWhiteboard, username);
                 System.exit(0);
             }
         });
@@ -45,7 +45,7 @@ public class ConnectingGUI implements Runnable {
                     if (dialog.isVisible()
                             && (e.getSource() == optionPane)
                             && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
-                        retractApplication(remoteWhiteboardState, username);
+                        retractApplication(remoteWhiteboard, username);
                         System.exit(0);
                     }
                 });
@@ -63,9 +63,9 @@ public class ConnectingGUI implements Runnable {
         dialog.dispose();
     }
 
-    private void retractApplication(IRemoteWhiteboard remoteWhiteboardState, String username) {
+    private void retractApplication(IRemoteWhiteboard remoteWhiteboard, String username) {
         try {
-            remoteWhiteboardState.retractApplication(username);
+            remoteWhiteboard.retractApplication(username);
         } catch (RemoteException e) {
             System.err.println("Failed to retract application");
             e.printStackTrace();

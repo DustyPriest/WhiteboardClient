@@ -20,10 +20,10 @@ public class Main {
             //Connect to the rmi registry that is running on localhost
             Registry registry = LocateRegistry.getRegistry(address);
 
-            //Retrieve the stub/proxy for the remote math object from the registry
-            IRemoteWhiteboard remoteMath = (IRemoteWhiteboard) registry.lookup("RemoteWhiteboard");
+            //Retrieve the stub/proxy for the remote whiteboard object from the registry
+            IRemoteWhiteboard remoteWhiteboard = (IRemoteWhiteboard) registry.lookup("RemoteWhiteboard");
 
-            new WhiteboardGUI(remoteMath, username);
+            new WhiteboardGUI(remoteWhiteboard, username);
 
         }catch(Exception e) {
             handleConnectionFailure(e);

@@ -26,18 +26,18 @@ public class WhiteboardGUI extends JFrame {
     private JButton selectedDrawingButton = brushButton;
     private final ChatGUI chatGUI;
 
-    public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
+    public WhiteboardGUI(IRemoteWhiteboard remoteWhiteboard, String username) {
         super();
 
         try {
-            if (!remoteWhiteboardState.userExists(username)) {
+            if (!remoteWhiteboard.userExists(username)) {
                 try {
-                    remoteWhiteboardState.applyForConnection(username);
-                    ConnectingGUI connectingGUI = new ConnectingGUI(remoteWhiteboardState, username);
+                    remoteWhiteboard.applyForConnection(username);
+                    ConnectingGUI connectingGUI = new ConnectingGUI(remoteWhiteboard, username);
                     SwingUtilities.invokeLater(connectingGUI);
-                    awaitConnection(remoteWhiteboardState, username);
+                    awaitConnection(remoteWhiteboard, username);
                     connectingGUI.close();
-                    if (!remoteWhiteboardState.userExists(username)) {
+                    if (!remoteWhiteboard.userExists(username)) {
                         JOptionPane.showMessageDialog(this, "Connection request denied", "Connection Denied", JOptionPane.ERROR_MESSAGE);
                         System.exit(0);
                     }
@@ -54,7 +54,7 @@ public class WhiteboardGUI extends JFrame {
             Main.handleConnectionFailure(e);
         }
 
-        whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboardState, username);
+        whiteboardCanvas = new WhiteboardCanvas(remoteWhiteboard, username);
         mainPanel.add(whiteboardCanvas, BorderLayout.CENTER);
         for (String name : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             fontComboBox.addItem(name);
@@ -75,7 +75,7 @@ public class WhiteboardGUI extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 try {
-                    remoteWhiteboardState.kickUser(username);
+                    remoteWhiteboard.kickUser(username);
                 } catch (RemoteException ex) {
                     System.err.println("Failed to remove user from server list");
                     Main.handleConnectionFailure(ex);
@@ -87,7 +87,7 @@ public class WhiteboardGUI extends JFrame {
         this.setBounds((int) screenSize.getWidth() / 2 - 400, (int) screenSize.getHeight() / 2 - 300, 800, 600);
         this.setVisible(true);
 
-        chatGUI = new ChatGUI(remoteWhiteboardState, username);
+        chatGUI = new ChatGUI(remoteWhiteboard, username);
         this.requestFocus();
     }
 
@@ -140,9 +140,9 @@ public class WhiteboardGUI extends JFrame {
         drawingOptionsToolbar.addSeparator();
     }
 
-    private void awaitConnection(IRemoteWhiteboard remoteWhiteboardState, String username) {
+    private void awaitConnection(IRemoteWhiteboard remoteWhiteboard, String username) {
         try {
-            while (remoteWhiteboardState.applicationPending(username)) {
+            while (remoteWhiteboard.applicationPending(username)) {
                 Thread.sleep(1000);
             }
         } catch (RemoteException e) {

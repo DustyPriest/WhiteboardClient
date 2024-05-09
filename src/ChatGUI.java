@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
@@ -14,12 +13,12 @@ public class ChatGUI extends JFrame implements KeyListener {
     private JTextArea chatArea;
     private JTextArea usersArea;
     private final Timer chatUpdateTimer;
-    private final IRemoteWhiteboard remoteWhiteboardState;
+    private final IRemoteWhiteboard remoteWhiteboard;
     private final String username;
 
-    public ChatGUI(IRemoteWhiteboard remoteWhiteboardState, String username) {
+    public ChatGUI(IRemoteWhiteboard remoteWhiteboard, String username) {
         super();
-        this.remoteWhiteboardState = remoteWhiteboardState;
+        this.remoteWhiteboard = remoteWhiteboard;
         this.username = username;
 
         this.setContentPane(mainPanel);
@@ -34,8 +33,8 @@ public class ChatGUI extends JFrame implements KeyListener {
 
         chatUpdateTimer = new Timer(1000, e -> {
             try {
-                chatArea.setText(String.join("\n", remoteWhiteboardState.getChatMessages()));
-                usersArea.setText(String.join("\n", remoteWhiteboardState.getCurrentUsers()));
+                chatArea.setText(String.join("\n", remoteWhiteboard.getChatMessages()));
+                usersArea.setText(String.join("\n", remoteWhiteboard.getCurrentUsers()));
             } catch (RemoteException ex) {
                 System.err.println("Failed to get chat messages or users");
                 Main.handleConnectionFailure(ex);
@@ -51,7 +50,7 @@ public class ChatGUI extends JFrame implements KeyListener {
         String message = messageField.getText();
         if (!message.isEmpty()) {
             try {
-                remoteWhiteboardState.addChatMessage(message, username);
+                remoteWhiteboard.addChatMessage(message, username);
                 messageField.setText("");
             } catch (RemoteException ex) {
                 System.err.println("Failed to send chat message");

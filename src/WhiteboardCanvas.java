@@ -42,12 +42,6 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
         addMouseMotionListener(this);
         addKeyListener(this);
 
-        Timer repaintAndCheckBanTimer = new Timer(1000, e -> {
-            checkIfKicked();
-            repaint();
-        });
-        Main.addTimer(repaintAndCheckBanTimer);
-        repaintAndCheckBanTimer.start();
     }
 
     @Override
@@ -86,6 +80,11 @@ public class WhiteboardCanvas extends JPanel implements MouseInputListener, KeyL
             setDrawingColor(Color.BLACK);
         }
         this.drawingMode = drawingMode;
+    }
+
+    public void updateCanvas() {
+        checkIfKicked();
+        repaint();
     }
 
     @Override

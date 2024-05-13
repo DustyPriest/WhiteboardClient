@@ -88,6 +88,14 @@ public class WhiteboardGUI extends JFrame {
         this.setVisible(true);
 
         chatGUI = new ChatGUI(remoteWhiteboard, username);
+
+        Timer canvasAndChatUpdateTimer = new Timer(1000, e -> {
+            whiteboardCanvas.updateCanvas();
+            chatGUI.updateChat();
+        });
+        Main.setTimer(canvasAndChatUpdateTimer);
+        canvasAndChatUpdateTimer.start();
+
         this.requestFocus();
     }
 

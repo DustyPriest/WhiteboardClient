@@ -12,7 +12,6 @@ public class ChatGUI extends JFrame implements KeyListener {
     private JScrollPane activeUsersScrollPane;
     private JTextArea chatArea;
     private JTextArea usersArea;
-    private final Timer chatUpdateTimer;
     private final IRemoteWhiteboard remoteWhiteboard;
     private final String username;
 
@@ -31,19 +30,17 @@ public class ChatGUI extends JFrame implements KeyListener {
         sendButton.addActionListener(e -> sendMessage());
         messageField.addKeyListener(this);
 
-        chatUpdateTimer = new Timer(1000, e -> {
-            try {
-                chatArea.setText(String.join("\n", remoteWhiteboard.getChatMessages()));
-                usersArea.setText(String.join("\n", remoteWhiteboard.getCurrentUsers()));
-            } catch (RemoteException ex) {
-                System.err.println("Failed to get chat messages or users");
-                Main.handleConnectionFailure(ex);
-            }
-        });
-        Main.addTimer(chatUpdateTimer);
-        chatUpdateTimer.start();
-
         this.setVisible(true);
+    }
+
+    public void updateChat() {
+        try {
+            chatArea.setText(String.join("\n", remoteWhiteboard.getChatMessages()));
+            usersArea.setText(String.join("\n", remoteWhiteboard.getCurrentUsers()));
+        } catch (RemoteException ex) {
+            System.err.println("Failed to get chat messages or users");
+            Main.handleConnectionFailure(ex);
+        }
     }
 
     private void sendMessage() {

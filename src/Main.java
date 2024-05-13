@@ -7,7 +7,7 @@ public class Main {
 
     private static String address;
     private static String username;
-    private static final ArrayList<Timer> timers = new ArrayList<>();
+    private static Timer timer;
 
     public static void main(String[] args) {
 
@@ -33,16 +33,14 @@ public class Main {
     }
 
     public static void handleConnectionFailure(Exception e) {
-        for (Timer timer : timers) {
-            timer.stop();
-        }
+        timer.stop();
         JOptionPane.showMessageDialog(null, "Connection to whiteboard failed.\nProgram will exit...", "Connection Failed", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
         System.exit(0);
     }
 
-    public static void addTimer(Timer timer) {
-        timers.add(timer);
+    public static void setTimer(Timer newTimer) {
+        timer = timer;
     }
 
     private static boolean parseArgs(String[] args) {

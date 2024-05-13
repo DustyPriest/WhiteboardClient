@@ -30,7 +30,10 @@ public class WhiteboardGUI extends JFrame {
         super();
 
         try {
-            if (!remoteWhiteboard.userExists(username)) {
+            if (remoteWhiteboard.userExists(username) || remoteWhiteboard.applicationPending(username)) {
+                JOptionPane.showMessageDialog(this, "Username already in use, please try again with another username.", "Connection Denied", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            } else {
                 try {
                     remoteWhiteboard.applyForConnection(username);
                     ConnectingGUI connectingGUI = new ConnectingGUI(remoteWhiteboard, username);
@@ -45,9 +48,6 @@ public class WhiteboardGUI extends JFrame {
                     System.err.println("Failed to add user to remote whiteboard");
                     Main.handleConnectionFailure(e);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Username already in use, please try again with another username.", "Connection Denied", JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
             }
         } catch (RemoteException e) {
             System.err.println("Failed to validate username");

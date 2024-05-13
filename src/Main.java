@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ public class Main {
     private static String address;
     private static String username;
     private static Timer timer;
+    private static IRemoteWhiteboard remoteWhiteboard;
 
     public static void main(String[] args) {
 
@@ -21,7 +24,7 @@ public class Main {
             Registry registry = LocateRegistry.getRegistry(address);
 
             //Retrieve the stub/proxy for the remote whiteboard object from the registry
-            IRemoteWhiteboard remoteWhiteboard = (IRemoteWhiteboard) registry.lookup("RemoteWhiteboard");
+            remoteWhiteboard = (IRemoteWhiteboard) registry.lookup("RemoteWhiteboard");
 
             new WhiteboardGUI(remoteWhiteboard, username);
 
@@ -33,14 +36,19 @@ public class Main {
     }
 
     public static void handleConnectionFailure(Exception e) {
-        timer.stop();
+        if (timer != null) {
+            timer.stop();
+        }
+        try {
+            remoteWhiteboard.kickUser(username);
+        } catch (RemoteException ignored) {}
         JOptionPane.showMessageDialog(null, "Connection to whiteboard failed.\nProgram will exit...", "Connection Failed", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
         System.exit(0);
     }
 
     public static void setTimer(Timer newTimer) {
-        timer = timer;
+        timer = newTimer;
     }
 
     private static boolean parseArgs(String[] args) {
